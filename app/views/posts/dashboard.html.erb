@@ -1,0 +1,44 @@
+<h1>Admin Dashboard <%= link_to new_post_path, :class => "btn btn-success" do %><span class="glyphicon glyphicon-plus"/></span> New post<% end %><br></h1>
+
+<p>This is a utility to easily manipulate the OrigaMIT front page. </p>
+
+	<div class="alert alert-danger">
+		Image uploading is currently not supported. Transfer files using FTP to the relevant directory (i.e. <tt>/public/images</tt>) and link to them here.
+	</div>
+
+<hr>
+<ul id="draggablePanelList" class="list-unstyled">
+<% @posts.each do |post| %>
+	<li data-item-id=<%= "#{post.id}" %> class="item" style="cursor: move;">
+		<div>
+			<h4><%= post.title %></h4>
+			<%= post.text.html_safe %>
+			<form class="form-inline">
+				<%= link_to post_path(post), class: "btn btn-default btn-sm pull-right",
+					method: :delete,
+					data: { confirm: 'Are you sure?' } do %>  
+					<i class="glyphicon glyphicon-trash"></i>			
+				<% end %>
+				<%= link_to edit_post_path(post), class: "btn btn-default btn-sm pull-right" do %>
+					<i class="glyphicon glyphicon-pencil"></i>			
+				<% end %>
+				<a class="btn btn-default btn-sm pull-right display <% if post.display %>active<% end %>"  data-id="<%=post.id%>" data-toggle="button" >Display</a>
+				<br>
+			</form>
+			<hr>
+		</div>
+	</li>
+<% end %>
+</ul>
+
+<script>
+$("document").ready(function() {
+	$(".display").click(function() {
+		$.ajax({
+			url: "/posts/"+$(this).attr("data-id")+'/display',
+			type: "POST",
+			dataType: "json",
+		});
+	});
+});
+</script>

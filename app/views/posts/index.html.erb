@@ -1,0 +1,10 @@
+<big>Welcome to OrigaMIT, MIT's origami club. We seek to promote, practice, and teach origami folding, analysis, and design.</big>
+<br><br><hr>
+
+<ul class="list-unstyled">
+<% @posts.each do |post| %>
+			<h4><%= post.title %></h4>
+			<%= post.text.html_safe %><br>
+<hr>
+<% end %>
+</ul>

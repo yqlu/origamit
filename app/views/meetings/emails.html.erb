@@ -1,0 +1,49 @@
+<script>
+
+$(document).ready(function() {
+	$("#delete").click(function(e) {
+        $("#dialog").dialog('option', 'buttons', {
+            "Confirm" : function() {
+            	$.ajax({
+            		url: "<%= emails_meetings_path %>/",
+					type: "DELETE",
+					dataType: "json",
+					success: function(data, textStatus, xhr) {
+						location.reload(); 
+					},
+					error: function() {
+						location.reload(); 
+					}
+				});
+				$(this).dialog("close");
+            },
+            "Cancel" : function() {
+                $(this).dialog("close");
+            }
+        });
+
+        $("#dialog").dialog("open");				
+	});
+
+	$("#dialog").dialog({
+        modal: true,
+        bgiframe: true,
+        width: 500,
+        height: 200,
+        autoOpen: false
+    });
+});
+</script>
+
+<div class="container">
+<h1>Email Addresses</h1>
+<p>Here are the pending emails which need to be added to the mailing list.</p> <a id="delete" class="btn btn-danger">Clear all</a><br><br>
+
+<% @emails.each do |email| %>
+<p><%= email.address %></p>
+<% end %>
+</div>
+
+<div id="dialog" title="Confirmation Required">
+  Are you sure about this?
+</div>

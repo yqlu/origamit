@@ -1,0 +1,3 @@
+<Files *.rb>
+  SetHandler fcgid-script
+</Files>

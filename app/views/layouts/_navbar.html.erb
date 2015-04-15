@@ -1,0 +1,44 @@
+<div class="container-fluid">
+	<div class="hidden-xs">
+		<a href="/" class="btn btn-lg btn-default btn-block" width="100%"><div><img class="hidden-sm" src="/images/step1.svg" height="50"> Home</div></a><br>
+		<a href="/members" class="btn btn-lg btn-default btn-block" width="100%"><div><img class="hidden-sm" src="/images/step2.svg" height="50"> Members</div></a><br>
+		<a href="/conv14" class="btn btn-lg btn-default btn-block" width="100%"><div><img class="hidden-sm" src="/images/step3.svg" height="50"> Convention</div></a><br>
+		<a href="/gallery" id="gallery" class="btn btn-lg btn-default btn-block" width="100%"><div><img class="hidden-sm"src="/images/step4.svg" height="50"> Gallery<div id="gallery_dates"></div></div></a><br>
+		<a href="/press" class="btn btn-lg btn-default btn-block" width="100%"><div><img class="hidden-sm" src="/images/step5.svg" height="50"> Press</div></a><br>
+		<a href="/events" class="btn btn-lg btn-default btn-block" width="100%"><div><img class="hidden-sm" src="/images/step6.svg" height="50"> Events</div></a><br>
+		<a href="/links" class="btn btn-lg btn-default btn-block" width="100%"><div><img class="hidden-sm" src="/images/step7.svg" height="50"> Links</div></a><br>
+		<%= render 'layouts/gcal' %>
+	</div>
+	<div class="visible-xs-block row">
+		<nav class="navbar navbar-default">
+		  <div class="container-fluid">
+		    <div class="navbar-header">
+		      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		      </button>
+      <a class="navbar-brand" href="#">Menu</a>
+      		    </div>
+		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		      <ul class="nav navbar-nav">
+		        <li><a href="/">Home</a></li>
+		        <li class="dropdown">
+		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Calendar <span class="caret"></span></a>
+		          <ul class="dropdown-menu" role="menu">
+					<%= render 'layouts/gcal' %>
+		          </ul>
+		        </li>
+		        <li><a href="/members">Members</a></li>
+		        <li><a href="/conv14">Convention</a></li>
+		        <li><a href="/gallery">Gallery</a></li>
+		        <li><a href="/press">Press</a></li>
+		        <li><a href="/events">Events</a></li>
+		        <li><a href="/links">Links</a></li>
+		      </ul>
+		    </div>
+		  </div>
+		</nav>
+	</div>
+
+</div>

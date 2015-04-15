@@ -1,0 +1,42 @@
+// Place all the styles related to the Images controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+/*
+ *= require blueimp-bootstrap-image-gallery/css/blueimp-gallery.min.css
+ *= require blueimp-bootstrap-image-gallery/css/bootstrap-image-gallery.min.css
+*/
+
+
+.month{
+	margin-left: 20%
+}
+
+.day{
+	margin-left: 40%
+}
+
+.btn.special {
+    background-color: #FFFFFF;
+    color: #333333;
+    text-decoration: none;
+    background-position: 0;
+    transition: none;
+}
+
+#gallery_dates {
+	margin-left: 20%
+}
+
+.img_wrap {
+	display: inline-block;
+	width:120px;
+	height:120px;
+	overflow: hidden;
+	margin-bottom:-8px;
+	text-align: center
+}
+
+.img_wrap > img {
+	margin: 0 -100% 0 -100%;
+}

@@ -1,0 +1,26 @@
+<%= render "layouts/head"%>
+<body>
+<div style="overflow:hidden">
+	<div class="container-fluid center-div">
+		<a href="/"><img style="width: 70%; max-width: 100%; height: auto;" src="/images/origamitlogo.png"></a>
+	</div>
+	<div class="row container-fluid">
+		<div class="col-sm-4 col-md-3"><%= render "layouts/navbar" %></div>
+		<div class="col-sm-8 col-md-6"><%= yield %></div>
+		<div class="col-md-3 container visible-md-block visible-lg-block"><%= render "layouts/sidebar" %></div>
+	</div>
+	<br><br><br>
+	<p align="center"><font size="-1">
+	Admin: <a href="/mediawiki/">Wiki</a> | <a href="/posts/dashboard/">Dashboard</a> | <a href="http://mailman.mit.edu/mailman/admin/origamit">Mailman</a> | <a href="/meetings">Meetings</a>
+</div>
+	<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-13155299-3");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+<%- headers = ['Meeting Date', 'Name', 'Affiliation', 'Email'] -%>
+<%= CSV.generate_line headers %><%- @attendances.each do |attendance| -%><%= CSV.generate_line([attendance.meeting.meeting_date.strftime("%m/%d/%Y"),attendance.member.name, attendance.member.affiliation, attendance.member.email]) %><%- end -%>

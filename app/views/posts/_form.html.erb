@@ -1,0 +1,31 @@
+<div class="container-fluid">
+	<%= form_for @post, :html => {:class => "form-horizontal center"} do |f| %>  
+		<% if @post.errors.any? %>
+			<div id="error_explanation">
+				<h2>
+					<%= pluralize(@post.errors.count, "error") %> prohibited
+					this article from being saved:
+				</h2>
+				<ul>
+					<% @post.errors.full_messages.each do |msg| %>
+						<li><%= msg %></li>
+					<% end %>
+				</ul>
+			</div>
+		<% end %>
+		<div class="form-group">
+			<%= f.label :title, class: "control-label" %>
+			<%= f.text_field :title, class: "form-control" %>
+		</div>
+
+		<div class="form-group">
+			<%= f.label :text, "Text (you can add HTML tags here)", class: "control-label" %>
+			<%= f.text_area :text, class: "form-control", style: "font-family:monospace;", rows: 10 %>
+		</div>
+		
+		<div class="form-group">
+		<%= link_to 'Back', posts_path, class: "btn btn-default" %>
+		<%= f.submit "Submit", class: "btn btn-primary" %>
+		</div>
+	<% end %>
+</div>

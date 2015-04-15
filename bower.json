@@ -1,0 +1,8 @@
+{
+  "name": "origamit",
+  "dependencies": {
+    "lodash": "~2.4.1",
+    "bootstrap": "~3.3.1",
+    "eonasdan-bootstrap-datetimepicker": "~3.1.3"
+  }
+}

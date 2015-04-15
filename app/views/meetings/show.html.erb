@@ -1,0 +1,175 @@
+<script>
+$(document).ready(function() {
+	var delete_member = function(id) {
+		$.ajax({
+			url: "/attendances/"+id,
+			type: "DELETE",
+			dataType: "json",
+			success: function(data, textStatus, xhr) {
+				getAll();
+			},
+			error: function() {
+				getAll();
+			}
+		});
+	}
+
+	$("#dialog").dialog({
+        modal: true,
+        bgiframe: true,
+        width: 500,
+        height: 200,
+        autoOpen: false
+    });
+
+
+	var all_members = function() {
+		$.ajax({
+			url: "<%= members_attendances_path %>",
+			type: "GET",
+			dataType: "json",
+			success: function(data) {
+				var names = new Bloodhound({
+					datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+					queryTokenizer: Bloodhound.tokenizers.whitespace,
+					// `states` is an array of state names defined in "The Basics"
+					local: $.map(data.members, function(member) { return { value: member.name }; })
+				});
+				 
+				// kicks off the loading/processing of `local` and `prefetch`
+				names.initialize();
+				 
+				$('#bloodhound .typeahead').typeahead({
+					hint: true,
+					highlight: true,
+					minLength: 1
+				},
+				{
+					name: 'name',
+					displayKey: 'value',
+					// `ttAdapter` wraps the suggestion engine in an adapter that
+					// is compatible with the typeahead jQuery plugin
+					source: names.ttAdapter()
+				}); 
+
+				$("#bloodhound .typeahead").on("typeahead:autocompleted typeahead:selected", function(e, suggestion, dataset) {
+					var member = _.find(data.members, {name: suggestion.value});
+					$("#affiliation").val(member.affiliation);
+					$("#email").val(member.email);
+				});
+			},
+			error: function() {
+			}
+		});
+	}
+
+	all_members();
+
+	var display = function(members) {
+		$("#meeting_list").html("");
+		members.forEach(function(member) {
+			$("#meeting_list").append("<div class='panel panel-default'><div class='panel-body'><b>"+member.name+"</b> ("+member.affiliation+")<a id='delete_"+member.id+"' class='pull-right'>Delete</a></div></div>");
+			$("#delete_"+member.id).click(function() {
+		        $("#dialog").dialog('option', 'buttons', {
+		            "Confirm" : function() {
+						delete_member(member.id)
+						$(this).dialog("close");
+		            },
+		            "Cancel" : function() {
+		                $(this).dialog("close");
+		            }
+		        });
+
+		        $("#dialog").dialog("open");				
+			});
+		});
+	}
+
+	var meeting = <%= @meeting.id %>;
+	var date = new Date("<%= @meeting.meeting_date %>".substring(0,10));
+
+	$("#title").html("OrigaMIT Meeting: " + date.toDateString());
+
+	var getAll = function() {
+		$.ajax({
+			url: "<%= attendance_path %>/",
+			type: "GET",
+			dataType: "json",
+			success: function(data) {
+				display(data.attendances);
+			},
+			error: function() {
+			}
+		});
+	}
+
+	getAll();
+
+	$("#submit").click(function() {
+		var name = $("#name").val();
+		var affiliation = $("#affiliation option:selected").text();
+		var email = $("#email").val();
+		$.ajax({
+			url: "<%= attendances_path %>/",
+			type: "POST",
+			dataType: "json",
+			data: {attendance: {name: name, affiliation: affiliation, email: email, meeting: meeting}},
+			success: function(data, textStatus, xhr) {
+				getAll();
+			},
+			error: function() {
+				getAll();
+			}
+		});
+
+	});
+
+})
+</script>
+
+<div class="container">
+	<h1 style="text-align: center" id="title"></h1>
+	<form class="form-horizontal">
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Name</label>
+			<div class="col-sm-6" id="bloodhound">
+				<input id="name" type="text" class="form-control typeahead">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Affiliation</label>
+			<div class="col-sm-6">
+				<select id="affiliation" class="form-control">
+				    <option value="Non-MIT">Non-MIT</option>
+				    <option value="2018">2018</option>
+				    <option value="2017">2017</option>
+				    <option value="2016">2016</option>
+				    <option value="2015">2015</option>
+				    <option value="Graduate">Graduate</option>
+				    <option value="Alumni">Alumni</option>
+				    <option value="Staff">Staff</option>
+				    <option value="Faculty">Faculty</option>
+				</select>
+			</div>
+		</div>
+		<p>Provide your email if you are not yet on our mailing list and would like to join:
+		</p>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Email (optional)</label>
+			<div class="col-sm-6">
+				<input id="email" type="text" class="form-control"><br>
+			</div><br>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-2"></div>
+			<div class="col-sm-6">
+				<a class="btn btn-primary" id="submit">Submit</a>
+			</div>
+		</div>
+	</form>
+	<div id="meeting_list"></div>
+	<div id="dialog" title="Confirmation Required">
+	  Are you sure about this?
+	</div>
+	<center><font size="-1"><a href="/meetings">Back</a></font></center>
+</div>

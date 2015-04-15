@@ -1,0 +1,115 @@
+<script>
+var year = <%= @year %>;
+var month = <%= @month %>;
+var day = <%= @day %>;
+
+$("document").ready(function(){
+	$("#gallery").addClass("special");
+	$("#gallery").removeAttr("href");
+	$("#gallery_dates").append("<div id='dates'></div>");
+	var md = {'01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr', '05': 'May', '06': 'Jun', '07': 'Jul', '08': 'Aug', '09': 'Sep', '10': 'Oct', '11': 'Nov', '12': 'Dec'};
+	var incrementer = function() {
+		var i = 0;
+		return function() {
+			i = i + 1;
+			return i;
+		}
+	}
+	var inc = incrementer();
+	$.ajax({
+		url: "/gallery/calendar/",
+		type: "get",
+		dataType: "json",
+		success: function(data, textStatus, xhr) {
+			data.dirs.children = _.sortBy(data.dirs.children, "data");
+			var years = data.dirs.children;
+			years.forEach(function(year) {
+				var y = year.data;
+				$("#dates").prepend('<div class="year"><a data-toggle="collapse" href="#_'+y+'">'+y+'</a></div><div id="_'+y+'" class="panel-collapse collapse"></div></div>');
+				year.children = _.sortBy(year.children, "data");
+				var months = year.children;
+				months.forEach(function(month) {
+					var m = month.data;
+					$("#_"+y).append('<div class="month"><a data-toggle="collapse" href="#_'+y+'_'+m+'">'+md[m]+'</a></div><div id="_'+y+'_'+m+'" class="panel-collapse collapse">');
+					month.children = _.sortBy(month.children, "data");
+					var days = month.children;
+					days.forEach(function(day) {
+						var d = day.data.substring(8,10);
+						$('#_'+y+'_'+m).append('<div class="day" seq='+inc()+' id="_'+y+'_'+m+'_'+d+'"><a href="/gallery/'+y+'/'+m+'/'+d+'">'+d+'</a></div>');
+					});
+				});
+			});
+			if (year === 0 || month === 0 || day === 0) {
+				year = parseInt(years.reverse()[0].data);
+				month = parseInt(years[0].children.reverse()[0].data);
+				day = parseInt(years[0].children[0].children.reverse()[0].data.substring(8,10));
+			}
+			month = (month < 10) ? '0'+month : month;
+			day = (day < 10) ? '0'+day : day;
+			$('#_'+year).addClass('in');
+			$('#_'+year+'_'+month).addClass('in');
+			$('#_'+year+'_'+month+'_'+day).addClass('bolded');
+			var cur = parseInt($('#_'+year+'_'+month+'_'+day).attr('seq'));
+			$("#next").attr("href",$("[seq='"+(cur+1)+"']").find("a").attr("href"));
+			$("#prev").attr("href",$("[seq='"+(cur-1)+"']").find("a").attr("href"));
+
+			$.ajax({
+				url: "/gallery/file/"+year+"/"+month+"/"+day,
+				type: "get",
+				dataType: "json",
+				success: function(data) {
+					$("#content").html(data.file);
+					data.images.forEach(function(img_url) {
+						var img_url = img_url.substring(6);
+						var regex = /^(.*)\/([^\/]*)$/;
+						var match = regex.exec(img_url)
+						var thumb_url = match[1]+"/thumbs/"+match[2];
+						$("#links").append("<a href='" + img_url + "' data-gallery><div class='img_wrap'><img src='" + thumb_url + "'></div></a>");
+					});
+				}
+			});
+
+		},
+		error: function() {
+		}
+	});
+});
+
+</script>
+
+<div id="content"></div>
+<a id="prev">Previous Meeting</a><a id="next" class="pull-right">Next Meeting</a><br><br>
+<div id="links"></div>
+<div id="blueimp-gallery" class="blueimp-gallery">
+    <!-- The container for the modal slides -->
+    <div class="slides"></div>
+    <!-- Controls for the borderless lightbox -->
+    <h3 class="title"></h3>
+    <a class="prev">‹</a>
+    <a class="next">›</a>
+    <a class="close">×</a>
+    <a class="play-pause"></a>
+    <ol class="indicator"></ol>
+    <!-- The modal dialog, which will be used to wrap the lightbox content -->
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body next"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left prev">
+                        <i class="glyphicon glyphicon-chevron-left"></i>
+                        Previous
+                    </button>
+                    <button type="button" class="btn btn-primary next">
+                        Next
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,142 @@
+<script type="text/javascript">
+$(document).ready(function() {
+	var delete_meeting = function(id) {
+		$.ajax({
+			url: "<%= meetings_path %>/"+id,
+			type: "DELETE",
+			dataType: "json",
+			success: function(data, textStatus, xhr) {
+				getAll();
+			},
+			error: function() {
+				getAll();
+			}
+		});
+	}
+
+	$("#dialog").dialog({
+		modal: true,
+		bgiframe: true,
+		width: 500,
+		height: 200,
+		autoOpen: false
+	});
+
+	var display = function(data) {
+		$("#meeting_list").html("");
+		_.sortBy(data.meetings, function(meeting) {
+			return -1*Date.parse(meeting.meeting_date);
+		}).forEach(function(meeting) {
+			var date = new Date(meeting.meeting_date);
+
+			$("#meeting_list").append("<div class='panel panel-default'><div class='panel-body'><a href='/meetings/"+meeting.id+"'>"+date.toDateString()+"</a><a id='delete_"+meeting.id+"' class='btn btn-sm pull-right confirm'>Delete</a></div></div>");
+
+			$("#delete_"+meeting.id).click(function(e) {
+				$("#dialog").dialog('option', 'buttons', {
+					"Confirm" : function() {
+						delete_meeting(meeting.id);
+						$(this).dialog("close");
+					},
+					"Cancel" : function() {
+						$(this).dialog("close");
+					}
+				});
+
+				$("#dialog").dialog("open");				
+			});
+		});
+	}
+
+	var getAll = function() {
+		$.ajax({
+			url: "<%= getAll_meetings_path %>",
+			type: "GET",
+			dataType: "json",
+			success: function(data, textStatus, xhr) {
+				display(data);
+			},
+			error: function() {
+				alert("Ajax error!")
+			}
+		});
+	}
+
+	getAll();
+
+	$("#create").click(function() {
+		$.ajax({
+			url: "<%= meetings_path %>",
+			type: "POST",
+			dataType: "json",
+			data: {"meeting": {"meeting_date": $("#meeting_date").val()}},
+			success: function(data, textStatus, xhr) {
+				getAll();
+			},
+			error: function() {
+				getAll();
+			}
+		});
+	});
+	$("#meetingform").on('ajax:success', function(data, status, xhr) {
+		getAll();
+	});
+});
+</script>
+
+<br>
+
+<div class="container">
+	<h1>OrigaMIT Meetings Dashboard</h1>
+	<br>
+	<%= form_for(@meeting, html: { id: "meetingform" }, remote: true, update: 
+	{ success: "response", failure: "error"}, :url => {:action => "create"}) do |f| %>
+		<div class="form-group">
+			<a class="btn btn-info" href="/attendances/output.csv">Download CSV List</a> <a class="btn btn-info" href="/meetings/emails">Pending emails</a>
+		</div>
+		<% if @meeting.errors.any? %>
+			<div id="error_explanation">
+				<h2>
+					<%= pluralize(@meeting.errors.count, "error") %> prohibited this article from being saved:
+				</h2>
+				<ul>
+					<% @meeting.errors.full_messages.each do |msg| %>
+						<li><%= msg %></li>
+					<% end %>
+				</ul>
+			</div>
+		<% end %>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">Date</label>
+			<div class="col-sm-4">
+				<div class='input-group date' id='datetimepicker1'>
+					<%= f.text_field :meeting_date, class: "form-control", id: "meeting_date" %>
+					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+					</span>
+				</div>
+			</div>
+			<div class="col-sm-5">
+				<a class="btn btn-info" id="create">Create</a>
+			</div>
+		</div>
+		<br><br>
+		<script type="text/javascript">
+			$(function () {
+				$('#datetimepicker1').datetimepicker({
+					pickTime: false
+				});
+			});
+		</script>
+	<% end %>
+</div>
+<div class="container">	
+	<div id="meeting_list"></div>
+</div>
+
+<div id="dialog" title="Confirmation Required">
+  Are you sure about this?
+</div>
+<center><font size="-1"><a href="/">Back</a></font></center>
+
+
+</body>
+</html>
