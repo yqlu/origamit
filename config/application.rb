@@ -27,10 +27,6 @@ module Origamit
         'X-Frame-Options' => 'ALLOWALL'
     }
 
-    config.assets.configure do |env|
-      if Rails.env.development? || Rails.env.test?
-    env.cache = ActiveSupport::Cache.lookup_store(:memory_store)
-
     initializer 'setup_asset_pipeline', :group => :all  do |app|
       # We don't want the default of everything that isn't js or css, because it pulls too many things in
       app.config.assets.precompile.shift
